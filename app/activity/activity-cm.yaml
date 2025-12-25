@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: activity-env
+  namespace: gallery
+data:
+  BOOTSTRAP_SERVERS: "kafka:19092"
+  MONGO_SERVER: "mongo"

@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-service
+  namespace: gallery
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-service
+  template:
+    metadata:
+      labels:
+        app: gateway-service
+    spec:
+      containers:
+        - name: gateway-service
+          image: lubospodkidos/gallery-gateway-service:1.0
+          envFrom:
+            - configMapRef:
+                name: gateway-env
+          env:
+            - name: REDIS_USER
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secrets
+                  key: REDIS_USER
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secrets
+                  key: REDIS_PASSWORD
+          ports:
+            - containerPort: 8443
+          volumeMounts:
+            - name: gateway-certs
+              mountPath: /app/certs/gateway
+              readOnly: true
+            - name: auth-pubkey
+              mountPath: /app/certs/auth
+              readOnly: true
+          resources:
+            requests:
+              memory: "250M"
+              cpu: "200m"
+            limits:
+              memory: "500M"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8443
+              scheme: HTTPS
+            initialDelaySeconds: 45
+            periodSeconds: 15
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8443
+              scheme: HTTPS
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 3
+
+      volumes:
+        - name: gateway-certs
+          secret:
+            secretName: gateway-certs-secret
+        - name: auth-pubkey
+          secret:
+            secretName: auth-keys-secret
+            items:
+              - key: auth-pubkey.pem
+                path: auth-pubkey.pem

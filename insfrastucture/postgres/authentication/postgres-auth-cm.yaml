@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-auth-config
+  namespace: gallery
+data:
+  POSTGRES_DB: "auth_db"

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-comments-config
+  namespace: gallery
+data:
+  POSTGRES_DB: "comments_db"

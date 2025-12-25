@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gallery-front
+  namespace: gallery
+spec:
+  selector:
+    app: gallery-front
+  ports:
+    - port: 80
+      targetPort: 9090
