@@ -1,0 +1,64 @@
+apiVersion: v2
+name: gallery
+description: An Umbrella Helm chart for Image Gallery Application
+type: application
+version: 1.0.0
+
+dependencies:
+  - name: common-templates
+    version: 0.1.0
+  - name: gateway-service
+    version: 0.1.0
+    condition: gateway-service.enabled
+  - name: front-service
+    version: 0.1.0
+    condition: front-service.enabled
+  - name: activity-service
+    version: 0.1.0
+    condition: activity-service.enabled
+  - name: authentication-service
+    version: 0.1.0
+    condition: authentication-service.enabled
+  - name: user-service
+    version: 0.1.0
+    condition: user-service.enabled
+  - name: comment-service
+    version: 0.1.0
+    condition: comment-service.enabled
+  - name: image-service
+    version: 0.1.0
+    condition: image-service.enabled
+  - name: kafka
+    version: 0.1.0
+    condition: kafka.enabled
+  - name: localstack
+    version: 0.1.0
+    condition: localstack.enabled
+  - name: mongo
+    version: 0.1.0
+    condition: mongo.enabled
+  - name: redis
+    version: 0.1.0
+    condition: redis.enabled
+  - name: postgres
+    version: 0.1.0
+    condition: postgres-users.enabled
+    alias: postgres-users
+  - name: postgres
+    version: 0.1.0
+    condition: postgres-auth.enabled
+    alias: postgres-auth
+  - name: postgres
+    version: 0.1.0
+    condition: postgres-images.enabled
+    alias: postgres-images
+  - name: postgres
+    version: 0.1.0
+    condition: postgres-comments.enabled
+    alias: postgres-comments
+  - name: mongo-express
+    version: 0.1.0
+    condition: mongo-express.enabled
+  - name: kafka-ui
+    version: 0.1.0
+    condition: kafka-ui.enabled

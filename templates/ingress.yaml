@@ -1,0 +1,4 @@
+{{- range .Values.ingress }}
+---
+  {{ include "gallery.ingress" (dict "root" $ "context" .) }}
+{{- end }}

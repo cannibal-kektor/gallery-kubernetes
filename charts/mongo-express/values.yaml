@@ -1,0 +1,31 @@
+serviceName: mongo-express
+
+image:
+  repository: mongo-express
+  tag: "1.0.2"
+
+variables:
+  ME_CONFIG_MONGODB_URL: "mongodb://mongo:27017"
+  ME_CONFIG_HEALTH_CHECK_PATH: "/status"
+
+containerPort: 8081
+
+service:
+  create: true
+
+resources:
+  requests:
+    memory: "100M"
+    cpu: "50m"
+  limits:
+    memory: "200M"
+    cpu: "200m"
+
+probe:
+  enabled: true
+  liveness:
+    path: "/status"
+    initialDelaySeconds: 15
+  readiness:
+    path: "/status"
+    initialDelaySeconds: 10

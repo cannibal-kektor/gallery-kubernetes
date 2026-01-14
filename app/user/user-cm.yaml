@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: user-env
-  namespace: gallery
-data:
-  AUTHENTICATION_SERVICE_URL: "http://auth-service:8080"
-  USERS_DB_URL: "jdbc:postgresql://postgres-users:5432/users_db"

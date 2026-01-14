@@ -1,0 +1,49 @@
+serviceName: gateway-service
+replicaCount: 1
+
+image:
+  repository: lubospodkidos/gallery-gateway-service
+  tag: "1.0"
+
+variables:
+  REDIS_HOST: "redis"
+
+redis: true
+
+containerPort: 8443
+
+service:
+  create: true
+  servicePort: 443
+  targetPort: 8443
+
+volumeMounts:
+  - name: gateway-certs
+    mountPath: /app/certs/gateway
+    readOnly: true
+  - name: auth-pubkey
+    mountPath: /app/certs/auth
+    readOnly: true
+
+volumes:
+  - name: gateway-certs
+    secret:
+      secretName: '{{ $.Release.Name }}-{{ $.Values.secret.certs.secretName }}'
+  - name: auth-pubkey
+    secret:
+      secretName: '{{ $.Release.Name }}-{{ $.Values.secret.tokenSignPubKey.secretName }}'
+      items:
+        - key: '{{ $.Values.secret.tokenSignPubKey.item }}'
+          path: auth-pubkey.pem
+
+probe:
+  enabled: true
+  scheme: HTTPS
+
+resources:
+  requests:
+    memory: "250Mi"
+    cpu: "100m"
+  limits:
+    memory: "500Mi"
+    cpu: "500m"

@@ -1,0 +1,38 @@
+serviceName: kafka-ui
+
+image:
+  repository: provectuslabs/kafka-ui
+  tag: "v0.7.2"
+
+variables:
+  DYNAMIC_CONFIG_ENABLED: "true"
+
+files:
+  - src: "conf/dynamic_config.yaml"
+    dest: "dynamic_config.yaml"
+
+containerPort: 8080
+
+service:
+  create: true
+
+volumeMounts:
+  - name: config-volume
+    mountPath: /etc/kafkaui/dynamic_config.yaml
+    subPath: dynamic_config.yaml
+
+volumes:
+  - name: config-volume
+    configMap:
+      name: config
+
+resources:
+  requests:
+    memory: "130Mi"
+    cpu: "100m"
+  limits:
+    memory: "260Mi"
+    cpu: "300m"
+
+probe:
+  enabled: true

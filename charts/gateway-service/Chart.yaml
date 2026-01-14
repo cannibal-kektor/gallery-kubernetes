@@ -1,0 +1,5 @@
+apiVersion: v2
+name: gateway-service
+version: 0.1.0
+description: A Helm Chart for Gallery Gateway Service
+type: application

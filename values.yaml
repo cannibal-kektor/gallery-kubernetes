@@ -1,0 +1,178 @@
+namespace: gallery
+
+localstack: { enabled: true }
+kafka: { enabled: true }
+redis: { enabled: true }
+mongo: { enabled: true }
+mongo-express: { enabled: true }
+kafka-ui: { enabled: true }
+activity-service: { enabled: true }
+front-service: { enabled: true }
+
+authentication-service:
+  enabled : true
+  secret:
+    db:
+      secretName: postgres-auth-secret
+      userKey: AUTHENTICATION_DB_USER
+      passwordKey: AUTHENTICATION_DB_PASSWORD
+    keys:
+      secretName: auth-keys-secret
+    redis:
+      secretName: redis-secret
+      userKey: REDIS_USER
+      passwordKey: REDIS_PASSWORD
+
+user-service:
+  enabled : true
+  secret:
+    db:
+      secretName: postgres-users-secret
+      userKey: USERS_DB_USER
+      passwordKey: USERS_DB_PASSWORD
+
+comment-service:
+  enabled : true
+  secret:
+    db:
+      secretName: postgres-comments-secret
+      userKey: COMMENTS_DB_USER
+      passwordKey: COMMENTS_DB_PASSWORD
+    redis:
+      secretName: redis-secret
+      userKey: REDIS_USER
+      passwordKey: REDIS_PASSWORD
+
+image-service:
+  enabled : true
+  secret:
+    db:
+      secretName: postgres-images-secret
+      userKey: IMAGES_DB_USER
+      passwordKey: IMAGES_DB_PASSWORD
+    redis:
+      secretName: redis-secret
+      userKey: REDIS_USER
+      passwordKey: REDIS_PASSWORD
+    aws:
+      secretName: aws-secret
+      accessKey: AWS_ACCESS_KEY
+      secretKey: AWS_SECRET_KEY
+
+gateway-service:
+  enabled : true
+  secret:
+    redis:
+      secretName: redis-secret
+      userKey: REDIS_USER
+      passwordKey: REDIS_PASSWORD
+    certs:
+      secretName: gateway-certs-secret
+    tokenSignPubKey:
+      secretName: auth-keys-secret
+      item: auth-pubkey.pem
+
+postgres-users:
+  enabled: true
+  serviceName: postgres-users
+  dbName: users_db
+  secret:
+    secretName: postgres-users-secret
+    userKey: USERS_DB_USER
+    passwordKey: USERS_DB_PASSWORD
+
+postgres-auth:
+  enabled: true
+  serviceName: postgres-auth
+  dbName: auth_db
+  secret:
+    secretName: postgres-auth-secret
+    userKey: AUTHENTICATION_DB_USER
+    passwordKey: AUTHENTICATION_DB_PASSWORD
+
+postgres-images:
+  enabled: true
+  serviceName: postgres-images
+  dbName: images_db
+  secret:
+    secretName: postgres-images-secret
+    userKey: IMAGES_DB_USER
+    passwordKey: IMAGES_DB_PASSWORD
+
+postgres-comments:
+  enabled: true
+  serviceName: postgres-comments
+  dbName: comments_db
+  secret:
+    secretName: postgres-comments-secret
+    userKey: COMMENTS_DB_USER
+    passwordKey: COMMENTS_DB_PASSWORD
+
+global_secrets:
+  auth-keys-secret:
+    files:
+      auth-server.pem: "secret-keys/auth/auth-server.pem"
+      auth-server.key: "secret-keys/auth/auth-server.key"
+      auth-pubkey.pem: "secret-keys/auth/auth-pubkey.pem"
+  gateway-certs-secret:
+    files:
+      gateway-server.pem: "secret-keys/gateway/gateway-server.pem"
+      gateway-server.key: "secret-keys/gateway/gateway-server.key"
+  aws-secret:
+    stringData:
+      AWS_ACCESS_KEY: "test"
+      AWS_SECRET_KEY: "test"
+  postgres-comments-secret:
+    stringData:
+      COMMENTS_DB_USER: "testUser"
+      COMMENTS_DB_PASSWORD: "testPassword"
+  postgres-images-secret:
+    stringData:
+      IMAGES_DB_USER: "testUser"
+      IMAGES_DB_PASSWORD: "testPassword"
+  postgres-auth-secret:
+    stringData:
+      AUTHENTICATION_DB_USER: "testUser"
+      AUTHENTICATION_DB_PASSWORD: "testPassword"
+  postgres-users-secret:
+    stringData:
+      USERS_DB_USER: "testUser"
+      USERS_DB_PASSWORD: "testPassword"
+  redis-secret:
+    stringData:
+      REDIS_USER: "testRedisUser"
+      REDIS_PASSWORD: "testRedisUserPassword"
+      REDIS_DEFAULT_PASSWORD: "testRedisPassword"
+
+ingress:
+  - name: api-ingress
+    annotations:
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    rules:
+      - host: gallery.local
+        paths:
+          - path: /api
+            serviceName: gateway-service
+            port: 443
+  - name: front-ingress
+    rules:
+      - host: gallery.local
+        paths:
+          - path: /
+            serviceName: gallery-front
+            port: 80
+      - host: localstack
+        paths:
+          - path: /
+            serviceName: localstack
+            port: 80
+      - host: mongo-express.local
+        paths:
+          - path: /
+            serviceName: mongo-express
+            port: 8081
+      - host: kafka-ui.local
+        paths:
+          - path: /
+            serviceName: kafka-ui
+            port: 8080

@@ -1,0 +1,26 @@
+serviceName: activity-service
+replicaCount: 1
+
+image:
+  repository: lubospodkidos/gallery-activity-service
+  tag: "1.0"
+
+variables:
+  BOOTSTRAP_SERVERS: 'kafka:19092'
+  MONGO_SERVER: 'mongo'
+
+containerPort: 8080
+
+service:
+  create: true
+
+probe:
+  enabled: true
+
+resources:
+  requests:
+    memory: "350Mi"
+    cpu: "100m"
+  limits:
+    memory: "700Mi"
+    cpu: "500m"

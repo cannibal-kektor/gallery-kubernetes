@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gateway-env
-  namespace: gallery
-data:
-  REDIS_HOST: "redis"

@@ -1,0 +1,30 @@
+serviceName: user-service
+replicaCount: 1
+
+image:
+  repository: lubospodkidos/gallery-users-service
+  tag: "1.0"
+
+variables:
+  AUTHENTICATION_SERVICE_URL: "http://auth-service:8080"
+  USERS_DB_URL: "jdbc:postgresql://postgres-users:5432/users_db"
+
+dbConnection:
+  user: USERS_DB_USER
+  password: USERS_DB_PASSWORD
+
+containerPort: 8080
+
+service:
+  create: true
+
+probe:
+  enabled: true
+
+resources:
+  requests:
+    memory: "300Mi"
+    cpu: "100m"
+  limits:
+    memory: "600Mi"
+    cpu: "500m"

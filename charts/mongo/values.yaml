@@ -1,0 +1,56 @@
+serviceName: mongo
+
+image:
+  repository: mongo
+  tag: "8.2"
+
+files:
+  - src: "conf/mongod.conf"
+    dest: "mongod.conf"
+  - src: "conf/healthcheck.sh"
+    dest: "healthcheck.sh"
+  - src: "conf/replica-setup.sh"
+    dest: "replica-setup.sh"
+
+storage:
+  name: mongo-data
+  path: /data/db
+  size: 1Gi
+  accessMode: ReadWriteOnce
+
+volumeMounts:
+  - name: config
+    mountPath: /etc/mongo
+
+volumes:
+  - name: config
+    configMap:
+      name: config
+
+containerPort: 27017
+
+service:
+  create: true
+  headless: true
+
+command: ["mongod", "--config", "/etc/mongo/mongod.conf"]
+
+probe:
+  liveness:
+    livenessProbe:
+      exec:
+        command: ["sh", "/etc/mongo/healthcheck.sh"]
+    initialDelaySeconds: 30
+  readiness:
+    readinessProbe:
+      exec:
+        command: ["sh", "/etc/mongo/healthcheck.sh"]
+    initialDelaySeconds: 15
+
+resources:
+  requests:
+    memory: "250Mi"
+    cpu: "100m"
+  limits:
+    memory: "500Mi"
+    cpu: "500m"
