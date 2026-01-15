@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "..fullname" $ }}-setup-job
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "..labels" $ | nindent 4 }}
+spec:
+  template:
+    metadata:
+      labels:
+        {{- include "..labels" $ | nindent 8 }}
+    spec:
+      containers:
+        - name: setup
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}"
+          command: ["bash", "/scripts/replica-setup.sh"]
+          volumeMounts:
+            - name: config
+              mountPath: /scripts
+      restartPolicy: OnFailure
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "..fullname" $ }}-config
+            defaultMode: 0755

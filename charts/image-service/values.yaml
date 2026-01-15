@@ -1,0 +1,39 @@
+serviceName: image-service
+replicaCount: 1
+
+image:
+  repository: lubospodkidos/gallery-image-service
+  tag: "1.0"
+
+variables:
+  COMMENT_SERVICE_URL: "http://comment-service:8080"
+  USER_SERVICE_URL: "http://user-service:8080"
+  IMAGES_DB_URL: "jdbc:postgresql://postgres-images:5432/images_db"
+  REDIS_HOST: "redis"
+  KAFKA_BOOTSTRAP_SERVERS: "kafka:19092"
+  AWS_URL_ENDPOINT: "http://localstack"
+  AWS_REGION: "us-east-1"
+
+dbConnection:
+  user: IMAGES_DB_USER
+  password: IMAGES_DB_PASSWORD
+
+awsConnection: true
+
+redis: true
+
+containerPort: 8080
+
+service:
+  create: true
+
+probe:
+  enabled: true
+
+resources:
+  requests:
+    memory: "400Mi"
+    cpu: "100m"
+  limits:
+    memory: "800Mi"
+    cpu: "500m"

@@ -1,0 +1,3 @@
+{{ include "gallery.service"  . }}
+---
+{{ include "gallery.deployment" . }}

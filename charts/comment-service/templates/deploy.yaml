@@ -1,0 +1,5 @@
+{{ include "gallery.configmap" . }}
+---
+{{ include "gallery.service"  . }}
+---
+{{ include "gallery.deployment" . }}

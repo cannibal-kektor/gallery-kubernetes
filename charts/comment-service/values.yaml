@@ -1,0 +1,35 @@
+serviceName: comment-service
+replicaCount: 1
+
+image:
+  repository: lubospodkidos/gallery-comment-service
+  tag: "1.0"
+
+variables:
+  IMAGE_SERVICE_URL: "http://image-service:8080"
+  USER_SERVICE_URL: "http://user-service:8080"
+  COMMENTS_DB_URL: "jdbc:postgresql://postgres-comments:5432/comments_db"
+  REDIS_HOST: "redis"
+  KAFKA_BOOTSTRAP_SERVERS: "kafka:19092"
+
+dbConnection:
+  user: COMMENTS_DB_USER
+  password: COMMENTS_DB_PASSWORD
+
+redis: true
+
+containerPort: 8080
+
+service:
+  create: true
+
+probe:
+  enabled: true
+
+resources:
+  requests:
+    memory: "300Mi"
+    cpu: "100m"
+  limits:
+    memory: "600Mi"
+    cpu: "500m"

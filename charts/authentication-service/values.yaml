@@ -1,0 +1,43 @@
+serviceName: auth-service
+replicaCount: 1
+
+image:
+  repository: lubospodkidos/gallery-auth-service
+  tag: "1.0"
+
+variables:
+  USER_SERVICE_URL: 'http://user-service:8080'
+  AUTHENTICATION_DB_URL: 'jdbc:postgresql://postgres-auth:5432/auth_db'
+  REDIS_HOST: 'redis'
+
+dbConnection:
+  user: AUTHENTICATION_DB_USER
+  password: AUTHENTICATION_DB_PASSWORD
+
+redis: true
+
+containerPort: 8080
+
+service:
+  create: true
+
+volumeMounts:
+  - name: private-keys
+    mountPath: /app/certs
+    readOnly: true
+
+volumes:
+  - name: private-keys
+    secret:
+      secretName: '{{ $.Release.Name }}-{{ $.Values.secret.keys.secretName }}'
+
+probe:
+  enabled: true
+
+resources:
+  requests:
+    memory: "250Mi"
+    cpu: "100m"
+  limits:
+    memory: "500Mi"
+    cpu: "500m"

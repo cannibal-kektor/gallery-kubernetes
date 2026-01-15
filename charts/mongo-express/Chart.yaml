@@ -1,0 +1,5 @@
+apiVersion: v2
+name: mongo-express
+version: 0.1.0
+description: A Helm chart for mongo-express
+type: application

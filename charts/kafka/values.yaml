@@ -1,0 +1,63 @@
+serviceName: kafka
+
+image:
+  repository: apache/kafka-native
+  tag: "4.0.0"
+
+variables:
+  CLUSTER_ID: "gallery-kafka-cluster-1"
+  KAFKA_NODE_ID: "1"
+  KAFKA_PROCESS_ROLES: "controller,broker"
+  KAFKA_CONTROLLER_QUORUM_VOTERS: "1@{{ .Release.Name }}-kafka-0:9093"
+  # Listeners configuration
+  KAFKA_LISTENERS: "CONTROLLER://0.0.0.0:9093,INTERNAL://0.0.0.0:19092"
+  KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka:19092"
+  KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT"
+  KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
+  KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+  # Cluster settings
+  KAFKA_MIN_INSYNC_REPLICAS: "1"
+  KAFKA_DEFAULT_REPLICATION_FACTOR: "1"
+  KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+  KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
+  KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
+  # Management
+  KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+  KAFKA_LOG_DIRS: "/var/lib/kafka/data"
+
+containerPorts:
+  - { name: internal, containerPort: 19092 }
+  - { name: controller, containerPort: 9093 }
+
+service:
+  create: true
+  headless: true
+  servicePorts:
+    - { name: internal, port: 19092 }
+    - { name: controller, port: 9093 }
+
+storage:
+  name: kafka-data
+  path: /var/lib/kafka/data
+  size: 2Gi
+  accessMode: ReadWriteOnce
+
+probe:
+  liveness:
+    livenessProbe:
+      tcpSocket:
+        port: 19092
+    initialDelaySeconds: 60
+  readiness:
+    readinessProbe:
+      tcpSocket:
+        port: 19092
+    initialDelaySeconds: 40
+
+resources:
+  requests:
+    memory: "300Mi"
+    cpu: "200m"
+  limits:
+    memory: "600Mi"
+    cpu: "1000m"

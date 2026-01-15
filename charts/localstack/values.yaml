@@ -1,0 +1,60 @@
+serviceName: localstack
+
+image:
+  repository: gresau/localstack-persist
+  tag: "latest"
+
+variables:
+  SERVICES: "s3"
+  PERSIST_DEFAULT: "0"
+  PERSIST_S3: "1"
+files:
+  - src: "conf/init-aws-s3.sh"
+    dest: "init-aws-s3.sh"
+
+storage:
+  name: localstack-data
+  path: /persisted-data
+  size: 1Gi
+  accessMode: ReadWriteOnce
+
+volumeMounts:
+  - name: init-scripts
+    mountPath: /etc/localstack/init/ready.d
+
+volumes:
+  - name: init-scripts
+    configMap:
+      name: config
+      items:
+        - key: init-aws-s3.sh
+          path: init-aws-s3.sh
+
+containerPort: 4566
+
+service:
+  create: true
+  servicePort: 80
+  targetPort: 4566
+
+probe:
+  liveness:
+    livenessProbe:
+      httpGet:
+        path: /_localstack/health
+        port: 4566
+    initialDelaySeconds: 20
+  readiness:
+    readinessProbe:
+      httpGet:
+        path: /_localstack/health
+        port: 4566
+    initialDelaySeconds: 10
+
+resources:
+  requests:
+    memory: "250Mi"
+    cpu: "100m"
+  limits:
+    memory: "500Mi"
+    cpu: "500m"
